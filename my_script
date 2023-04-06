@@ -39,17 +39,17 @@ if __name__ == '__main__':
         {
             'repo_name': 'wgpsec/ENScan_GO',
             'pattern': 'win',
-            'target_dir': 'E:/xinan/tools/404StarLink/'
+            'target_dir': 'E:/tools/404StarLink/'
         },
         {
             'repo_name': 'gh0stkey/HaE',
             'pattern': 'j8',
-            'target_dir': 'E:/xinan/tools/404StarLink/'
+            'target_dir': 'E:/tools/404StarLink/'
         },
         {
             'repo_name': 'shadow1ng/fscan',
             'pattern': '64.exe',
-            'target_dir': 'E:/xinan/tools/404StarLink/'
+            'target_dir': 'E:/tools/404StarLink/'
         },
        
         # 可以添加更多的条目
