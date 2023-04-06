@@ -1,0 +1,80 @@
+# pyhon3环境，一键下载最新GitHub工具。
+import requests
+import os
+
+# 设置GitHub Personal Access Token
+GITHUB_TOKEN = '你的GitHub token'
+
+# 设置代理
+PROXY = {
+    'http': 'http://127.0.0.1:7890',
+    'https': 'http://127.0.0.1:7890'
+}
+
+
+def download_release(asset_url, target_dir):
+    # 确保目标目录存在
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+
+    # 发送GET请求并下载文件
+    filename = os.path.basename(asset_url)
+    target_file = os.path.join(target_dir, filename)
+    headers = {
+        'Authorization': f'token {GITHUB_TOKEN}',
+        'User-Agent': 'MyDownloadScript'
+    }
+    with requests.get(asset_url, stream=True, headers=headers, proxies=PROXY) as r:
+        r.raise_for_status()
+        with open(target_file, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+    print(f"文件 {filename} 下载完成")
+
+
+if __name__ == '__main__':
+    # 指定要下载的GitHub链接和目标存储位置
+    releases = [
+        {
+            'repo_name': 'wgpsec/ENScan_GO',
+            'pattern': 'win',
+            'target_dir': 'E:/xinan/tools/404StarLink/'
+        },
+        {
+            'repo_name': 'gh0stkey/HaE',
+            'pattern': 'j8',
+            'target_dir': 'E:/xinan/tools/404StarLink/'
+        },
+        {
+            'repo_name': 'shadow1ng/fscan',
+            'pattern': '64.exe',
+            'target_dir': 'E:/xinan/tools/404StarLink/'
+        },
+       
+        # 可以添加更多的条目
+    ]
+
+    # 遍历每个要下载的GitHub仓库并下载
+    for release in releases:
+        api_url = f"https://api.github.com/repos/{release['repo_name']}/releases/latest"
+        headers = {
+            'Authorization': f'token {GITHUB_TOKEN}',
+            'User-Agent': 'MyDownloadScript'
+        }
+        response = requests.get(api_url, headers=headers, proxies=PROXY)
+        if response.status_code != 200:
+            print(f"获取最新版本信息失败 (HTTP {response.status_code})")
+            continue
+
+        release_info = response.json()
+        asset_url = None
+        for asset in release_info['assets']:
+            if release['pattern'].lower() in asset['name'].lower():
+                asset_url = asset['browser_download_url']
+                break
+        if asset_url is None:
+            print(f"未找到适合当前操作系统 ({release['pattern']}) 的文件")
+            continue
+
+        download_release(asset_url, release['target_dir'])
